@@ -15,3 +15,16 @@ export const loginSchema = Joi.object({
     username: Joi.string().trim().min(5).max(50).required(),
     password: Joi.string().trim().min(6).max(100).required().pattern(passwordRegex)
 })
+
+export const editUserSchema = Joi.object({
+    username: Joi.string().trim().min(5).max(50),
+    name: Joi.string().trim().min(3).max(50),
+    password: Joi.string().trim().min(8).max(50).optional().pattern(passwordRegex),
+    age: Joi.number().integer().min(10).max(120),
+    recoveryQuestion: Joi.string().min(10).max(250).optional(),
+    recoveryAnswer: Joi.string().optional()
+})
+
+export const deleteUserSchema = Joi.object({
+  userId: Joi.number().integer().positive().required()
+});
