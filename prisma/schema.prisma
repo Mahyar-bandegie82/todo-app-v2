@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -15,24 +14,25 @@ datasource db {
 }
 
 model User {
-  id               Int      @id @default(autoincrement())
-  userName         String   @unique
-  name             String
-  password         String
-  age              Int
-  isAdmin          Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  recoveryQuestion String
-  todos            Todo[]
+  id                Int      @id @default(autoincrement())
+  user_name         String   @unique
+  name              String
+  password          String
+  age               Int
+  is_admin          Boolean  @default(false)
+  created_at        DateTime @default(now())
+  recovery_question String
+  recovery_answer   String
+  todos             Todo[]
 }
 
 model Todo {
-  id           Int       @id @default(autoincrement())
-  taskTitle    String
-  createdAt    DateTime  @default(now())
-  dueDate      DateTime? 
-  expired      Boolean   @default(false)
-  isSuccssfull Boolean   @default(false)
-  user         User      @relation(fields: [userId], references: [id])
-  userId       Int
+  id            Int       @id @default(autoincrement())
+  task_title    String
+  created_at    DateTime  @default(now())
+  dueDate       DateTime?
+  expired       Boolean   @default(false)
+  is_succssfull Boolean   @default(false)
+  user          User      @relation(fields: [user_id], references: [id])
+  user_id       Int
 }

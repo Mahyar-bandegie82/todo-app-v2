@@ -2,19 +2,22 @@ import express from 'express';
 import { validatorMIddleware } from '../../../middleware/userSchemaValidation.js';
 import { signupSchema } from '../../../../validation/users/userDatavalidation.js';
 import { loginSchema } from '../../../../validation/users/userDatavalidation.js';
+import {signUpUser} from '../../../../services/users/auth.js'
 
 const router = express.Router()
 
 router.post('/api/v1/auth/signup', validatorMIddleware(signupSchema), async (req, res) => {
     try {
         const data = req.body;
-        res.status(200).json({
-            message: 'Validation passed successfully!',
-            validatedData: data,
+        const newUser = await signUpUser(data);
+
+        return res.status(200).json({
+            massage : 'it works',
+            user : newUser
         });
     } catch (err) {
-        console.log(err);
-        throw err;
+        console.error('Signup Error:', err);
+        return res.status(500).json({ message: 'Internal server error' })
     }
 })
 
