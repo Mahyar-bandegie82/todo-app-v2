@@ -1,0 +1,8 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/api/v1/tasks
+method: GET
+body:
+  type: json
+  content: "{\r\n    \"user_id\" : 1\r\n}"
+order: 4366199073208258

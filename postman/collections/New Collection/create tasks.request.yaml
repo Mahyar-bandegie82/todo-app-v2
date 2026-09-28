@@ -1,0 +1,13 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/api/v1/tasks/create
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "user_id": 1,
+        "task_title": "learn express typescript",
+        "due_date": "2026-12-12T00:00:00Z"
+    }
+order: 4250340607331387
