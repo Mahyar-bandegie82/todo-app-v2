@@ -1,0 +1,22 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/api/v1/auth/signup
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"user_name\" : \"mahyar82\",\r
+
+    \    \"name\" : \"mahyar\",\r
+
+    \    \"password\" : \"@MAhyar8213\",\r
+
+    \    \"age\" : \"24\",\r
+
+    \    \"recovery_question\" : \"how old are you ?\",\r
+
+    \    \"recovery_answer\" : \"24\"\r
+
+    }"
+order: 1790619382067
