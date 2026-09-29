@@ -1,6 +1,6 @@
 import express from 'express'
-import {validatorMIddleware} from './api/middleware/userSchemaValidation.js';
-import userRoute from './api/routes/v1/users/auth.js'
+import { validatorMIddleware } from './api/middleware/userSchemaValidation.js';
+import userRoute from './api/routes/V1/users/auth.route.js'
 import taskRoute from './api/routes/v1/tasks/task.route.js'
 
 

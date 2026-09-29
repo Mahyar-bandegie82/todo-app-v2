@@ -6,6 +6,10 @@ const prisma = new PrismaClient()
 export async function signUpUser(jsonData) {
     jsonData.password = await bcrypt.hash(jsonData.password, 13);
     try {
+        const userName = await prisma.user.findUnique({
+            where: { user_name: jsonData.user_name}
+        })
+        if (userName) throw new Error("username ia already taken")
         const newUser = await prisma.user.create({
             data: jsonData
         })
@@ -13,11 +17,6 @@ export async function signUpUser(jsonData) {
         return newUser
     } catch (err) {
         console.log(err)
-        if (err.code === 'P2002') {
-            const error = new Error('Username is already taken');
-            console.log(error)
-            throw err
-        }
         throw err
     }
 }
