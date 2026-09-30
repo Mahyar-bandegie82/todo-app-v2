@@ -8,18 +8,22 @@ import { updateTasks } from '../../../../services/tasks/CRUD.js';
 import { updateTaskSchema } from '../../../../validation/tasks/task.validation.js';
 import { deleteTaskSchema } from '../../../../validation/tasks/task.validation.js';
 import { deleteTask } from '../../../../services/tasks/CRUD.js';
+import validateJWT from '../../../middleware/jwtvalidation.js';
 
 const router = express.Router()
+
+router.use(validateJWT)
 
 router.post('/api/v1/tasks/create', validatorMIddleware(tasksSchema), async (req, res) => {
     try {
         const data = req.body;
-        if (!data.user_id) {
+        const userId = req.user
+        if (!userId) {
             return res.status(400).json({
                 message: 'user_id is required to create a task'
             });
         }
-        const newTask = await createTask(data);
+        const newTask = await createTask(data , userId);
         return res.status(200).json({
             message: 'Task created successfully',
             task: newTask
@@ -34,13 +38,13 @@ router.post('/api/v1/tasks/create', validatorMIddleware(tasksSchema), async (req
 
 router.get('/api/v1/tasks', validatorMIddleware(readTasksSchema), async (req, res) => {
     try {
-        const data = req.body.user_id;
-        if (!data) {
+        const userId = req.user;
+        if (!userId) {
             return res.status(400).json({
                 message: 'user_id is required to get tasks'
             });
         }
-        const tasks = await getTasksByUserId({ user_id: data });
+        const tasks = await getTasksByUserId(userId);
         return res.status(200).json({
             message: 'Tasks retrieved successfully',
             tasks: tasks
@@ -56,12 +60,13 @@ router.get('/api/v1/tasks', validatorMIddleware(readTasksSchema), async (req, re
 router.put('/api/v1/tasks/update', validatorMIddleware(updateTaskSchema), async (req, res) => {
     try{
         const data = req.body;
-        if (!data.task_id) {
+        const userId = req.user
+        if (!data.task_id || !userId) {
             return res.status(400).json({
-                message: 'task_id is required to update a task'
+                message: 'task_id and userid is required to update a task'
             });
         }
-        const updatedTask = await updateTasks(data);
+        const updatedTask = await updateTasks(data, userId);
         return res.status(200).json({
             message: 'Task updated successfully',
             task: updatedTask
@@ -77,7 +82,8 @@ router.put('/api/v1/tasks/update', validatorMIddleware(updateTaskSchema), async 
 router.delete('/api/v1/tasks/delete', validatorMIddleware(deleteTaskSchema), async (req, res) => {
     try {
         const data = req.body;
-        if (!data.task_id || !data.user_id) {
+        const userid = req.user
+        if (!data.id || !userid) {
             return res.status(400).json({
                 message: 'task_id and user_id are required to delete a task'
             });

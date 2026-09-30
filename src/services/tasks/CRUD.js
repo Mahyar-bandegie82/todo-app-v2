@@ -1,19 +1,23 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export async function createTask(jsonData) {
+export async function createTask(jsonData, userId) {
     try {
-        if (!jsonData.user_id) {
+        if (!userId) {
             throw new Error('user_id is required to create a task');
         }
         const existingUser = await prisma.user.findUnique({
-            where: { id: jsonData.user_id }
+            where: { id: userId }
         });
         if (!existingUser) {
             throw new Error('User not found');
         }
         const newTask = await prisma.todo.create({
-            data: jsonData
+            data: {
+                ...jsonData,
+                user_id : userId
+            }
+            
         });
         return newTask;
     } catch (err) {
@@ -22,10 +26,10 @@ export async function createTask(jsonData) {
     }
 }
 
-export async function getTasksByUserId(jsonData) {
+export async function getTasksByUserId(userID) {
     try {
         const tasks = await prisma.todo.findMany({
-            where: { user_id: jsonData.user_id }
+            where: { user_id : userID} ,
         })
         tasks.sort((a, b) => a.id - b.id);
         return tasks;
@@ -35,27 +39,22 @@ export async function getTasksByUserId(jsonData) {
     }
 }
 
-export async function updateTasks(jsonData) {
+export async function updateTasks(jsonData, userId) {
     try {
-        const editedTask = {}
+        let editedTask = {}
         const existingTask = await prisma.todo.findUnique({
-            where: { id: jsonData.task_id }
+            where: { id: jsonData.id , user_id : userId }
         });
         editedTask = {...existingTask}
-        if (jsonData.task_title) {
+        if(jsonData.task_title) [
             editedTask.task_title = jsonData.task_title
-        }
-        else {
-            editedTask.task_title = existingTask.task_title
-        }
+        ]
         if (jsonData.due_date) {
             editedTask.due_date = jsonData.due_date
         }
-        else {
-            editedTask.due_date = existingTask.due_date
-        }
+
         const updatedTask = await prisma.todo.update({
-            where: { id: jsonData.task_id },
+            where: { id: jsonData.id , user_id : userId },
             data: editedTask
         });
         
@@ -66,10 +65,10 @@ export async function updateTasks(jsonData) {
     }
 }
 
-export async function deleteTask(jsonData) {
+export async function deleteTask(jsonData, userId) {
     try {
         const deletedTask = await prisma.todo.delete({
-            where: { id: jsonData.task_id }
+            where: { id: jsonData.id , user_id : userId }
         });
         return deletedTask;
     } catch (err) {
