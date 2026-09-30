@@ -17,8 +17,7 @@ export const loginSchema = Joi.object({
 })
 
 export const editUserSchema = Joi.object({
-    user_name: Joi.string().trim().min(5).max(50).required(),
-    changed_user_name: Joi.string().trim().min(5).max(50).optional(),
+    user_name: Joi.string().trim().min(5).max(50).optional(),
     name: Joi.string().trim().min(3).max(50).optional(),
     password: Joi.string().trim().min(8).max(50).optional().pattern(passwordRegex),
     age: Joi.number().integer().min(10).max(120).optional(),
