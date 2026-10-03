@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client"
 import Joi from "joi"
 
 const tasksSchema = Joi.object({
@@ -18,4 +19,6 @@ const updateTaskSchema = Joi.object({
 const deleteTaskSchema = Joi.object({
   id: Joi.number().integer().required()
 })
+
+
 export {tasksSchema, readTasksSchema, updateTaskSchema, deleteTaskSchema}

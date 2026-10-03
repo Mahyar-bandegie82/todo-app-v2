@@ -214,9 +214,9 @@ export async function deleteTaskAdmin(data) {
 // async function createAdmin() {
 //     const newAdmin = await prisma.user.create({
 //         data: {
-//             user_name: "mahyarAdmin82",
+//             user_name: "kirkhar",
 //             name: "mahyar",
-//             password: await bcrypt.hash('@MAhyar4613', 10), // Replace with a hashed password (e.g., using bcrypt)
+//             password: await bcrypt.hash('@MAhyar4613', 10), 
 //             age: 24,
 //             is_admin: true,
 //             recovery_question: "What is your favorite cat name?",

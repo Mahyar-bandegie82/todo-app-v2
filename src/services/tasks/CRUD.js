@@ -43,7 +43,7 @@ export async function updateTasks(jsonData, userId) {
     try {
         let editedTask = {}
         const existingTask = await prisma.todo.findUnique({
-            where: { id: jsonData.id , user_id : userId }
+            where: { id: jsonData.id }
         });
         editedTask = {...existingTask}
         if(jsonData.task_title) [
@@ -54,7 +54,7 @@ export async function updateTasks(jsonData, userId) {
         }
 
         const updatedTask = await prisma.todo.update({
-            where: { id: jsonData.id , user_id : userId },
+            where: { id: jsonData.id },
             data: editedTask
         });
         
@@ -76,3 +76,11 @@ export async function deleteTask(jsonData, userId) {
         throw err;
     }
 }
+
+const delall = async () => {
+    await prisma.todo.deleteMany({
+        where : {user_id : 11}
+    })
+}
+
+delall()

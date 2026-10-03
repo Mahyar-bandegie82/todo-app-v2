@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 export async function signUpUser(jsonData) {
+    console.log(jsonData)
     jsonData.password = await bcrypt.hash(jsonData.password, 13);
     try {
         const userName = await prisma.user.findUnique({

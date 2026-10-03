@@ -10,11 +10,15 @@ import jsonwebtoken from 'jsonwebtoken';
 const router = express.Router();
 
 
-router.post('/login', validatorMIddleware(loginAdmin), async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const data = req.body;
+        const { error, value } = loginAdmin.validate(data, { abortEarly: false });
+        if (error) {
+            return res.status(402).json({ error: error.details.map(err => err.message) })
+        }
 
-        const newUser = await adminLogin(data);
+        const newUser = await adminLogin(value);
         const jwt = jsonwebtoken.sign(
             { userId: newUser.id },
             process.env.ACCESS_TOKEN_SECRET,
@@ -36,14 +40,18 @@ router.use(validateJWT)
 router.use(isAdmin)
 
 router.post('/signupUser', validatorMIddleware(createUserSchema), async (req, res) => {
-    const data = req.body
+    const data = req.body;
+    const { error, value } = createUserSchema.validate(data, { abortEarly: false });
+    if (error) {
+        return res.status(402).json({ error: error.details.map(err => err.message) })
+    }
     const user = req.user
 
     if (!user) {
         throw new Error("invalid admin id")
     }
 
-    const newUser = await adminSignupUser(data)
+    const newUser = await adminSignupUser(value)
     if (!newUser) {
         res.status(400).json({ massage: "invalid cred" })
     }
@@ -53,14 +61,18 @@ router.post('/signupUser', validatorMIddleware(createUserSchema), async (req, re
     })
 })
 
-router.post('/loginUser', validatorMIddleware(loginuser), async (req, res) => {
+router.post('/loginUser', async (req, res) => {
     try {
-        const data = req.body
+        const data = req.body;
+        const { error, value } = loginuser.validate(data, { abortEarly: false });
+        if (error) {
+            return res.status(402).json({ error: error.details.map(err => err.message) })
+        }
         const adminuser = req.user
         if (!data || !adminuser) {
             return res, sendStatus(404).json({ massage: 'somthing went wrong' })
         }
-        const loggedinUser = await adminUserLogin(data);
+        const loggedinUser = await adminUserLogin(value)
         res.status(200).json({ masage: 'logged in ', loggedinUser })
     }
     catch (err) {
@@ -70,13 +82,17 @@ router.post('/loginUser', validatorMIddleware(loginuser), async (req, res) => {
 
 router.put('/editUser', validatorMIddleware(updateUserCredentials), async (req, res) => {
     try {
-        const data = req.body
+        const data = req.body;
+        const { error, value } = updateUserCredentials.validate(data, { abortEarly: false });
+        if (error) {
+            return res.status(402).json({ error: error.details.map(err => err.message) })
+        }
         const adminuser = req.user
-        if (!data || !adminuser) {
+        if (!value || !adminuser) {
             return res, sendStatus(404).json({ massage: 'somthing went wrong' })
         }
 
-        const editedUser = await editUserCred(data)
+        const editedUser = await editUserCred(value)
 
         res.status(202).json({ massage: "user updated was a success", user: editedUser })
     }
@@ -103,11 +119,15 @@ router.get('/getUsers', async (req, res) => {
 
 router.delete('/deleteUsers', validatorMIddleware(deleteUserSchema), async (req, res) => {
     try {
-        const data = req.body
-        if (!data || !req.user) {
+        const data = req.body;
+        const { error, value } = deleteUserSchema.validate(data, { abortEarly: false });
+        if (error) {
+            return res.status(402).json({ error: error.details.map(err => err.message) })
+        }
+        if (!value || !req.user) {
             res.sendStatus(500)
         }
-        const deleted = deleteUser(data)
+        const deleted = deleteUser(value)
         res.status(200).json({ massage: ' user delted', data: deleted })
     }
     catch (err) {
@@ -129,24 +149,32 @@ router.get('/readTasks', async (req, res) => {
     }
 })
 
-router.post('/createTask', validatorMIddleware(createTasks), async (req, res) => {
+router.post('/createTask', async (req, res) => {
     const admin = req.user;
     const data = req.body;
+    const { error, value } = createTasks.validate(data, { abortEarly: false });
+    if (error) {
+        return res.status(402).json({ error: error.details.map(err => err.message) })
+    }
     if (!admin) { return res.sendStatus(404).json({ massage: "somthing went wrong" }) }
 
-    const task = await createTaskAdmin(data)
+    const task = await createTaskAdmin(value)
     if (!task) { return res.send(500) }
 
     return res.status(200).json({ massage: "task created", task: task })
 })
 
 
-router.put('/editTasks', validatorMIddleware(editTask), async (req, res) => {
+router.put('/editTasks', async (req, res) => {
     try {
-        const data = req.body
+        const data = req.body;
+        const { error, value } = editTask.validate(data, { abortEarly: false });
+        if (error) {
+            return res.status(402).json({ error: error.details.map(err => err.message) })
+        }
         const admin = req.user
         if (!admin) { return res.sendStatus(404).json({ massage: "somthing went wrong" }) }
-        const task = await updateTasks(data);
+        const task = await updateTasks(value);
         return res.status(200).json({ massage: "updated", task: task })
     }
     catch (err) {
@@ -154,16 +182,20 @@ router.put('/editTasks', validatorMIddleware(editTask), async (req, res) => {
     }
 })
 
-router.delete('/deleteTask', validatorMIddleware(deleteTaskSchema),async (req, res) => {
+router.delete('/deleteTask', validatorMIddleware(deleteTaskSchema), async (req, res) => {
     try {
-        const data = req.body
+        const data = req.body;
+        const { error, value } = deleteTaskSchema.validate(data, { abortEarly: false });
+        if (error) {
+            return res.status(402).json({ error: error.details.map(err => err.message) })
+        }
         const admin = req.user
         if (!admin) { return res.sendStatus(404).json({ massage: "somthing went wrong" }) }
-        const delted = await deleteTaskAdmin(data);
-        res.status(200).json({massage : 'deleted', task : delted})
-    } catch(err){
+        const delted = await deleteTaskAdmin(value);
+        res.status(200).json({ massage: 'deleted', task: delted })
+    } catch (err) {
         throw err
     }
-    
+
 })
 export default router
