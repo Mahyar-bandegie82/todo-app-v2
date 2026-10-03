@@ -11,7 +11,7 @@ import validateJWT from '../../../middleware/jwtvalidation.js'
 
 const router = express.Router()
 
-router.post('/api/v1/auth/signup', validatorMIddleware(signupSchema), async (req, res) => {
+router.post('/signup', validatorMIddleware(signupSchema), async (req, res) => {
 
     try {
         const data = req.body;
@@ -32,7 +32,7 @@ router.post('/api/v1/auth/signup', validatorMIddleware(signupSchema), async (req
     }
 })
 
-router.post('/api/v1/auth/login', validatorMIddleware(loginSchema), async (req, res) => {
+router.post('/login', validatorMIddleware(loginSchema), async (req, res) => {
     try {
         const data = req.body;
         const newUser = await loginUser(data);
@@ -51,7 +51,7 @@ router.post('/api/v1/auth/login', validatorMIddleware(loginSchema), async (req, 
     }
 });
 
-router.put('/api/v1/auth/edituser', validateJWT, validatorMIddleware(editUserSchema), async (req, res) => {
+router.put('/edituser', validateJWT, validatorMIddleware(editUserSchema), async (req, res) => {
     try {
         const userId = req.user;          
         const changes = req.body;

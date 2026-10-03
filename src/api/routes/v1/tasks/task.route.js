@@ -14,7 +14,7 @@ const router = express.Router()
 
 router.use(validateJWT)
 
-router.post('/api/v1/tasks/create', validatorMIddleware(tasksSchema), async (req, res) => {
+router.post('/create', validatorMIddleware(tasksSchema), async (req, res) => {
     try {
         const data = req.body;
         const userId = req.user
@@ -36,7 +36,7 @@ router.post('/api/v1/tasks/create', validatorMIddleware(tasksSchema), async (req
     }
 })
 
-router.get('/api/v1/tasks', validatorMIddleware(readTasksSchema), async (req, res) => {
+router.get('/gettasks', validatorMIddleware(readTasksSchema), async (req, res) => {
     try {
         const userId = req.user;
         if (!userId) {
@@ -57,7 +57,7 @@ router.get('/api/v1/tasks', validatorMIddleware(readTasksSchema), async (req, re
     }
 });
 
-router.put('/api/v1/tasks/update', validatorMIddleware(updateTaskSchema), async (req, res) => {
+router.put('/update', validatorMIddleware(updateTaskSchema), async (req, res) => {
     try{
         const data = req.body;
         const userId = req.user
@@ -79,7 +79,7 @@ router.put('/api/v1/tasks/update', validatorMIddleware(updateTaskSchema), async 
     }
 });
 
-router.delete('/api/v1/tasks/delete', validatorMIddleware(deleteTaskSchema), async (req, res) => {
+router.delete('/delete', validatorMIddleware(deleteTaskSchema), async (req, res) => {
     try {
         const data = req.body;
         const userid = req.user
