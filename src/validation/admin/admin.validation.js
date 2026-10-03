@@ -51,3 +51,4 @@ export const editTask = Joi.object({
 export const deleteTaskSchema = Joi.object({
   id: Joi.number().integer().positive().required()
 });
+

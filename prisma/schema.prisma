@@ -19,6 +19,8 @@ model User {
   name              String
   password          String
   age               Int
+  email             String   @default("test@gmail.com")
+  // gmail             String   
   is_admin          Boolean  @default(false)
   created_at        DateTime @default(now())
   recovery_question String
@@ -30,7 +32,7 @@ model Todo {
   id            Int       @id @default(autoincrement())
   task_title    String
   created_at    DateTime  @default(now())
-  due_date       DateTime?
+  due_date      DateTime?
   expired       Boolean   @default(false)
   is_succssfull Boolean   @default(false)
   user          User      @relation(fields: [user_id], references: [id])
