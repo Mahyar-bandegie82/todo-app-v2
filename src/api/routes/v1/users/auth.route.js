@@ -11,6 +11,14 @@ import validateJWT from '../../../middleware/jwtvalidation.js'
 
 const router = express.Router()
 
+export function generateAccessToken(userId) {
+    return jsonwebtoken.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
+}
+
+export function generateRefreshToken(userId) {
+    return jsonwebtoken.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
+}
+
 router.post('/signup', async (req, res) => {
     try {
         const data = req.body;
@@ -19,13 +27,11 @@ router.post('/signup', async (req, res) => {
             return res.status(402).json({error: error.details.map(err => err.message)})
         }
         const newUser = await signUpUser(value);
-        const jwt = jsonwebtoken.sign(
-            { userId: newUser.id },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '1h' }
-        );
+        const accessToken = generateAccessToken(newUser.id);
+        const refreshToken = generateRefreshToken(newUser.id);
         return res.status(201).json({
-            token: jwt,
+            token: accessToken,
+            refreshToken: refreshToken,
             user: data.user_name
         });
 
@@ -43,13 +49,11 @@ router.post('/login', async (req, res) => {
             return res.status(402).json({error: error.details.map(err => err.message)})
         }
         const newUser = await loginUser(data);
-        const jwt = jsonwebtoken.sign(
-            { userId: newUser.id },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '24h' }
-        );
-        return res.status(200).json({
-            token: jwt,
+        const accessToken = generateAccessToken(newUser.id);
+        const refreshToken = generateRefreshToken(newUser.id);
+        return res.status(201).json({
+            token: accessToken,
+            refreshToken: refreshToken,
             user: data.user_name
         });
     } catch (err) {
