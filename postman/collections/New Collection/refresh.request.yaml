@@ -1,0 +1,8 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/api/v1/users/refresh
+method: POST
+body:
+  type: json
+  content: ""
+order: 4383126463301739

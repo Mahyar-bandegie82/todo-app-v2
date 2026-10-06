@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt'
-
+import crypto from 'node:crypto';
 const prisma = new PrismaClient()
 
 export async function signUpUser(jsonData) {
@@ -72,6 +72,51 @@ export async function editUser(userID, changes) {
         })
         return updatedUser
 
+    }
+    catch (err) {
+        console.log(err)
+        throw err
+    }
+}
+
+export async function getRefreshTokenByHash(hashedToken) {
+    try {
+        const refreshToken = await prisma.refreshToken.findUnique({
+            where: { token_hash: hashedToken }
+        });
+        return refreshToken;
+    }
+    catch (err) {
+        console.log(err)
+        throw err
+    }
+}
+
+export async function addRefreshToken(userId, refreshToken) {
+    try {
+        const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
+        const newRefreshToken = await prisma.refreshToken.create({
+            data: {
+                token_hash: hashedToken,
+                user_id: userId,
+                expires_at: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) 
+            }
+        });
+        return newRefreshToken;
+    }
+    catch (err) {
+        console.log(err)
+        throw err
+    }
+}
+
+export async function revokeRefreshToken(hashedToken) {
+    try {
+        const revokedToken = await prisma.refreshToken.update({
+            where: { token_hash: hashedToken },
+            data: { is_revoked: true }
+        });
+        return revokedToken;
     }
     catch (err) {
         console.log(err)
