@@ -14,11 +14,11 @@ import { getRefreshTokenByHash, addRefreshToken, revokeRefreshToken } from '../.
 
 const router = express.Router()
 export function generateAccessToken(userId) {
-    return jsonwebtoken.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
+    return jsonwebtoken.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20m' });
 }
 
 export function generateRefreshToken(userId) {
-    return jsonwebtoken.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1m' });
+    return jsonwebtoken.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1h' });
 }
 
 router.post('/refresh', async (req, res) => {
@@ -31,11 +31,11 @@ router.post('/refresh', async (req, res) => {
         const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
         const refreshTokenData = await getRefreshTokenByHash(hashedToken);
         if (!refreshTokenData || refreshTokenData.is_revoked) {
-            await revokeRefreshToken(hashedToken);
+            // await revokeRefreshToken(hashedToken);
             return res.status(403).json({ message: 'Invalid or revoked refresh token' });
         }
         if (new Date() > refreshTokenData.expires_at) {
-            await revokeRefreshToken(hashedToken);
+            // await revokeRefreshToken(hashedToken);
             return res.status(403).json({ message: 'Refresh token has expired' });
         }
         await revokeRefreshToken(hashedToken);

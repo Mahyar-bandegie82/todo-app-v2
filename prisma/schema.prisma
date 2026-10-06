@@ -27,6 +27,13 @@ model User {
   recovery_answer   String
   todos             Todo[]
   refreshTokens     RefreshToken[]
+  ultimateTodo      ultimateTodo?
+}
+
+model ultimateTodo {
+  id      Int  @id @default(autoincrement())
+  user    User @relation(fields: [user_id], references: [id])
+  user_id Int  @unique
 }
 
 model RefreshToken {
@@ -36,16 +43,23 @@ model RefreshToken {
   user_id    Int
   created_at DateTime @default(now())
   expires_at DateTime
-  is_revoked Boolean @default(false)
+  is_revoked Boolean  @default(false)
 }
 
 model Todo {
-  id            Int       @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   task_title    String
-  created_at    DateTime  @default(now())
+  created_at    DateTime   @default(now())
   due_date      DateTime?
-  expired       Boolean   @default(false)
-  is_succssfull Boolean   @default(false)
-  user          User      @relation(fields: [user_id], references: [id])
+  expired       Boolean    @default(false)
+  is_succssfull Boolean    @default(false)
+  user          User       @relation(fields: [user_id], references: [id])
   user_id       Int
+  category      category[] @relation("CategoryTodo")
+}
+
+model category {
+  id   Int    @id @default(autoincrement())
+  name String @default("General")
+  user Todo[] @relation("CategoryTodo")
 }
